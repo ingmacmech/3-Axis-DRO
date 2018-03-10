@@ -43,7 +43,8 @@
 #include "fsmc.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "ssd2119_LCD.h"
+#include "fonts.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -63,6 +64,9 @@ void SystemClock_Config(void);
 
 /* USER CODE BEGIN 0 */
 
+#define MESSAGE1   "     STM32F4xx      "
+#define MESSAGE2   " Device running on  "
+#define MESSAGE3   " stm32f4_discovery  "
 /* USER CODE END 0 */
 
 int main(void)
@@ -94,9 +98,18 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_TIM4_Init();
 
   /* USER CODE BEGIN 2 */
 
+
+  STM32f4_Discovery_LCD_Init();
+  LCD_Clear(LCD_COLOR_WHITE);
+  LCD_SetBackColor(LCD_COLOR_BLUE);
+  LCD_SetTextColor(LCD_COLOR_WHITE);
+  LCD_DisplayStringLine(LINE(3), (uint8_t *)MESSAGE1);
+  LCD_DisplayStringLine(LINE(4), (uint8_t *)MESSAGE2);
+  LCD_DisplayStringLine(LINE(5), (uint8_t *)MESSAGE3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -106,6 +119,7 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
+
 
   }
   /* USER CODE END 3 */

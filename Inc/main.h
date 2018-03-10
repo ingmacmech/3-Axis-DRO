@@ -46,8 +46,6 @@
 
 /* Private define ------------------------------------------------------------*/
 
-#define CS_I2C_SPI_Pin GPIO_PIN_3
-#define CS_I2C_SPI_GPIO_Port GPIOE
 #define PC14_OSC32_IN_Pin GPIO_PIN_14
 #define PC14_OSC32_IN_GPIO_Port GPIOC
 #define PC15_OSC32_OUT_Pin GPIO_PIN_15
@@ -74,6 +72,8 @@
 #define BOOT1_GPIO_Port GPIOB
 #define CLK_IN_Pin GPIO_PIN_10
 #define CLK_IN_GPIO_Port GPIOB
+#define LCD_PWM_PIN_Pin GPIO_PIN_13
+#define LCD_PWM_PIN_GPIO_Port GPIOD
 #define I2S3_MCK_Pin GPIO_PIN_7
 #define I2S3_MCK_GPIO_Port GPIOC
 #define SWCLK_Pin GPIO_PIN_14
@@ -82,6 +82,8 @@
 #define I2S3_SCK_GPIO_Port GPIOC
 #define I2S3_SD_Pin GPIO_PIN_12
 #define I2S3_SD_GPIO_Port GPIOC
+#define LCD_RST_PIN_Pin GPIO_PIN_3
+#define LCD_RST_PIN_GPIO_Port GPIOD
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
 #define Audio_SCL_Pin GPIO_PIN_6
