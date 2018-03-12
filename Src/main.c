@@ -45,13 +45,20 @@
 /* USER CODE BEGIN Includes */
 #include "ssd2119_LCD.h"
 #include "fonts.h"
+#include "dro.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+uint32_t test = 0;
+char buff[30];
+char buff2[30];
+float travel = 0.0;
+int intVal =0;
+int vor = 0;
+int nach = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -64,9 +71,7 @@ void SystemClock_Config(void);
 
 /* USER CODE BEGIN 0 */
 
-#define MESSAGE1   "     STM32F4xx      "
-#define MESSAGE2   " Device running on  "
-#define MESSAGE3   " stm32f4_discovery  "
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -98,18 +103,21 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_TIM5_Init();
   MX_TIM4_Init();
 
   /* USER CODE BEGIN 2 */
 
 
   STM32f4_Discovery_LCD_Init();
-  LCD_Clear(LCD_COLOR_WHITE);
-  LCD_SetBackColor(LCD_COLOR_BLUE);
-  LCD_SetTextColor(LCD_COLOR_WHITE);
-  LCD_DisplayStringLine(LINE(3), (uint8_t *)MESSAGE1);
-  LCD_DisplayStringLine(LINE(4), (uint8_t *)MESSAGE2);
-  LCD_DisplayStringLine(LINE(5), (uint8_t *)MESSAGE3);
+  LCD_Clear(LCD_COLOR_BLACK);
+  LCD_SetBackColor(LCD_COLOR_BLACK);
+  LCD_SetTextColor(LCD_COLOR_GREEN);
+
+  Show_StartUp_Dysplay();
+
+  HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -119,6 +127,19 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
+	  HAL_Delay(50);
+	  test = TIM4->CNT;
+	  travel = test*2.0/1024;
+	  intVal = travel *1000;
+	  vor = intVal/1000;
+	  nach = intVal%1000;
+	  snprintf(buff2, sizeof(buff2), "%lu", test);
+	  snprintf(buff, sizeof(buff), "%03d.%03d",vor,nach);
+	  LCD_DisplayStringLine(LINE(8), (uint8_t *)buff2);
+	  LCD_DisplayStringLine(LINE(9), (uint8_t *)buff);
+
+
+
 
 
   }
@@ -142,14 +163,13 @@ void SystemClock_Config(void)
 
     /**Initializes the CPU, AHB and APB busses clocks 
     */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = 16;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 50;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 168;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
@@ -165,7 +185,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
   }

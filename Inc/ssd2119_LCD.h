@@ -8,9 +8,8 @@
 #ifndef SSD2119_LCD_H_
 #define SSD2119_LCD_H_
 
-//#include "core_cm4.h"
 #include "fonts.h"
-
+#include "stm32f4xx.h"
 
 
 typedef struct
