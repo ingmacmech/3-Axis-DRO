@@ -46,6 +46,8 @@
 
 /* Private define ------------------------------------------------------------*/
 
+#define TEST_OUTPUT_Pin GPIO_PIN_2
+#define TEST_OUTPUT_GPIO_Port GPIOE
 #define PC14_OSC32_IN_Pin GPIO_PIN_14
 #define PC14_OSC32_IN_GPIO_Port GPIOC
 #define PC15_OSC32_OUT_Pin GPIO_PIN_15
@@ -56,6 +58,8 @@
 #define PH1_OSC_OUT_GPIO_Port GPIOH
 #define OTG_FS_PowerSwitchOn_Pin GPIO_PIN_0
 #define OTG_FS_PowerSwitchOn_GPIO_Port GPIOC
+#define CSn_Pin GPIO_PIN_1
+#define CSn_GPIO_Port GPIOC
 #define PDM_OUT_Pin GPIO_PIN_3
 #define PDM_OUT_GPIO_Port GPIOC
 #define B1_Pin GPIO_PIN_0
@@ -72,6 +76,22 @@
 #define BOOT1_GPIO_Port GPIOB
 #define CLK_IN_Pin GPIO_PIN_10
 #define CLK_IN_GPIO_Port GPIOB
+#define KEYPAD_COLUMN_3_Pin GPIO_PIN_11
+#define KEYPAD_COLUMN_3_GPIO_Port GPIOB
+#define KEYPAD_COLUMN_0_Pin GPIO_PIN_12
+#define KEYPAD_COLUMN_0_GPIO_Port GPIOB
+#define KEYPAD_COLUMN_1_Pin GPIO_PIN_13
+#define KEYPAD_COLUMN_1_GPIO_Port GPIOB
+#define KEYPAD_COLUMN_2_Pin GPIO_PIN_14
+#define KEYPAD_COLUMN_2_GPIO_Port GPIOB
+#define KEYPAD_ROW_0_Pin GPIO_PIN_6
+#define KEYPAD_ROW_0_GPIO_Port GPIOC
+#define KEYPAD_ROW_1_Pin GPIO_PIN_7
+#define KEYPAD_ROW_1_GPIO_Port GPIOC
+#define KEYPAD_ROW_2_Pin GPIO_PIN_8
+#define KEYPAD_ROW_2_GPIO_Port GPIOC
+#define KEYPAD_ROW_3_Pin GPIO_PIN_9
+#define KEYPAD_ROW_3_GPIO_Port GPIOC
 #define SWCLK_Pin GPIO_PIN_14
 #define SWCLK_GPIO_Port GPIOA
 #define I2S3_SCK_Pin GPIO_PIN_10
@@ -88,7 +108,10 @@
 #define MEMS_INT2_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
-
+typedef enum bool{
+	FALSE,
+	TRUE
+}bool_t;
 /* USER CODE END Private defines */
 
 void _Error_Handler(char *, int);

@@ -38,6 +38,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+#include "dma.h"
 #include "tim.h"
 #include "gpio.h"
 #include "fsmc.h"
@@ -46,6 +47,8 @@
 #include "ssd2119_LCD.h"
 #include "fonts.h"
 #include "dro.h"
+#include "4x4_matrix_key_pad.h"
+#include <math.h>
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -53,12 +56,21 @@
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 uint32_t test = 0;
+
 char buff[30];
 char buff2[30];
+char buff3[30];
 float travel = 0.0;
 int intVal =0;
 int vor = 0;
 int nach = 0;
+int value = 0;
+int32_t offset = 0;
+uint16_t dir1 = 0;
+uint16_t dir = 0;
+int32_t pos = 0;
+int32_t underOverFlowCn = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -99,15 +111,17 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_FSMC_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM5_Init();
   MX_TIM4_Init();
+  MX_TIM8_Init();
 
   /* USER CODE BEGIN 2 */
-
+  Init_Encoders();
 
   STM32f4_Discovery_LCD_Init();
   LCD_Clear(LCD_COLOR_BLACK);
@@ -115,8 +129,10 @@ int main(void)
   LCD_SetTextColor(LCD_COLOR_GREEN);
 
   Show_StartUp_Dysplay();
+  Init_Matrix_Key_Pad();
 
-  HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
+
+
 
   /* USER CODE END 2 */
 
@@ -128,14 +144,30 @@ int main(void)
 
   /* USER CODE BEGIN 3 */
 	  HAL_Delay(50);
-	  test = TIM4->CNT;
-	  travel = test*2.0/1024;
+	  //HAL_GPIO_WritePin(TEST_OUTPUT_GPIO_Port, TEST_OUTPUT_Pin,GPIO_PIN_SET);
+	  Update_Display();
+	  //HAL_GPIO_WritePin(TEST_OUTPUT_GPIO_Port, TEST_OUTPUT_Pin,GPIO_PIN_RESET);
+
+
+
+
+	  if(HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_SET){
+	  		  offset = TIM4->CNT - TIMER_OFFSET_16BIT + underOverFlowCn*TIMER_OFFSET_16BIT;
+	  	  }
+	  test = TIM3->CNT;
+	  value = (int)(TIM3->CNT - TIMER_OFFSET_16BIT + underOverFlowCn*TIMER_OFFSET_16BIT-offset);
+	  travel = value*2.0/1024;
 	  intVal = travel *1000;
 	  vor = intVal/1000;
-	  nach = intVal%1000;
+	  nach = abs(intVal%1000);
+	  dir1 = (TIM3->CR1);
+	  dir = (dir1 & 0x0010)>>4;
+
 	  snprintf(buff2, sizeof(buff2), "%lu", test);
-	  snprintf(buff, sizeof(buff), "%03d.%03d",vor,nach);
-	  LCD_DisplayStringLine(LINE(8), (uint8_t *)buff2);
+	  snprintf(buff, sizeof(buff), "DIR=%u O=%02li",dir, underOverFlowCn);
+	  snprintf(buff3, sizeof(buff), "Test=%4d.%03d",vor,nach);
+	  LCD_DisplayStringLine(LINE(7), (uint8_t *)buff2);
+	  LCD_DisplayStringLine(LINE(8), (uint8_t *)buff3);
 	  LCD_DisplayStringLine(LINE(9), (uint8_t *)buff);
 
 

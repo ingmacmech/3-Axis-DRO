@@ -36,14 +36,52 @@
 #include "stm32f4xx_it.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "main.h"
+extern int32_t underOverFlowCn;
+extern int32_t xOverflowCounter;
+extern int32_t yOverflowCounter;
+extern int32_t zOverflowCounter;
+extern int32_t wOverflowCounter;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern DMA_HandleTypeDef hdma_tim8_up;
+extern DMA_HandleTypeDef hdma_tim8_ch2;
+extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim2;
+extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim8;
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
 /******************************************************************************/
+
+/**
+* @brief This function handles System service call via SWI instruction.
+*/
+void SVC_Handler(void)
+{
+  /* USER CODE BEGIN SVCall_IRQn 0 */
+
+  /* USER CODE END SVCall_IRQn 0 */
+  /* USER CODE BEGIN SVCall_IRQn 1 */
+
+  /* USER CODE END SVCall_IRQn 1 */
+}
+
+/**
+* @brief This function handles Pendable request for system service.
+*/
+void PendSV_Handler(void)
+{
+  /* USER CODE BEGIN PendSV_IRQn 0 */
+
+  /* USER CODE END PendSV_IRQn 0 */
+  /* USER CODE BEGIN PendSV_IRQn 1 */
+
+  /* USER CODE END PendSV_IRQn 1 */
+}
 
 /**
 * @brief This function handles System tick timer.
@@ -66,6 +104,142 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
+
+/**
+* @brief This function handles TIM1 update interrupt and TIM10 global interrupt.
+*/
+void TIM1_UP_TIM10_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
+
+  /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim1);
+  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
+
+  if((TIM1->CNT == 65535) && (TIM1->CR1 & TIM_CR1_DIR)){
+      	  yOverflowCounter--;
+      	  TIM1->CNT = 32768;
+        }
+        else if ((TIM1->CNT == 0) && (~TIM1->CR1 & TIM_CR1_DIR)){
+      	  yOverflowCounter++;
+      	  TIM1->CNT = 32768;
+        }
+  /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM2 global interrupt.
+*/
+void TIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM2_IRQn 0 */
+
+  /* USER CODE END TIM2_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim2);
+  /* USER CODE BEGIN TIM2_IRQn 1 */
+  if((TIM2->CNT == 65535) && (TIM2->CR1 & TIM_CR1_DIR)){
+    	  wOverflowCounter--;
+    	  TIM2->CNT = 32768;
+      }
+      else if ((TIM2->CNT == 0) && (~TIM2->CR1 & TIM_CR1_DIR)){
+    	  wOverflowCounter++;
+    	  TIM2->CNT = 32768;
+      }
+  /* USER CODE END TIM2_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM3 global interrupt.
+*/
+void TIM3_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM3_IRQn 0 */
+
+  /* USER CODE END TIM3_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim3);
+  /* USER CODE BEGIN TIM3_IRQn 1 */
+  if((TIM3->CNT == 65535) && (TIM3->CR1 & TIM_CR1_DIR)){
+      	  zOverflowCounter--;
+      	  TIM3->CNT = 32768;
+        }
+        else if ((TIM3->CNT == 0) && (~TIM3->CR1 & TIM_CR1_DIR)){
+      	  zOverflowCounter++;
+      	  TIM3->CNT = 32768;
+        }
+  /* USER CODE END TIM3_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM4 global interrupt.
+*/
+void TIM4_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM4_IRQn 0 */
+
+  /* USER CODE END TIM4_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim4);
+  /* USER CODE BEGIN TIM4_IRQn 1 */
+  //HAL_GPIO_TogglePin(TEST_OUTPUT_GPIO_Port, TEST_OUTPUT_Pin);
+
+
+  if((TIM4->CNT == 65535) && (TIM4->CR1 & TIM_CR1_DIR)){
+	  underOverFlowCn--; // Can be removed only for testing in main
+	  xOverflowCounter--;
+	  TIM4->CNT = 32768;
+  }
+  else if ((TIM4->CNT == 0) && (~TIM4->CR1 & TIM_CR1_DIR)){
+	  underOverFlowCn++; // Can be removed only for testing in main
+	  xOverflowCounter++;
+	  TIM4->CNT = 32768;
+  }
+
+
+
+  /* USER CODE END TIM4_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM8 update interrupt and TIM13 global interrupt.
+*/
+void TIM8_UP_TIM13_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM8_UP_TIM13_IRQn 0 */
+  //static uint16_t counter = 0;
+  /* USER CODE END TIM8_UP_TIM13_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim8);
+  /* USER CODE BEGIN TIM8_UP_TIM13_IRQn 1 */
+
+  //counter++;
+  /* USER CODE END TIM8_UP_TIM13_IRQn 1 */
+}
+
+/**
+* @brief This function handles DMA2 stream1 global interrupt.
+*/
+void DMA2_Stream1_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream1_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream1_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_tim8_up);
+  /* USER CODE BEGIN DMA2_Stream1_IRQn 1 */
+  //HAL_GPIO_TogglePin(TEST_OUTPUT_GPIO_Port, TEST_OUTPUT_Pin);
+  /* USER CODE END DMA2_Stream1_IRQn 1 */
+}
+
+/**
+* @brief This function handles DMA2 stream3 global interrupt.
+*/
+void DMA2_Stream3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream3_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream3_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_tim8_ch2);
+  /* USER CODE BEGIN DMA2_Stream3_IRQn 1 */
+  HAL_GPIO_TogglePin(TEST_OUTPUT_GPIO_Port, TEST_OUTPUT_Pin);
+  /* USER CODE END DMA2_Stream3_IRQn 1 */
+}
 
 /* USER CODE BEGIN 1 */
 
