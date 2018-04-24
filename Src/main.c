@@ -153,6 +153,9 @@ int main(void)
 
 	  if(HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_SET){
 	  		  offset = TIM4->CNT - TIMER_OFFSET_16BIT + underOverFlowCn*TIMER_OFFSET_16BIT;
+	  		  Abs_Zeroing_Axis(X_Axis);
+	  		  Abs_Zeroing_Axis(Y_Axis);
+	  		  Abs_Zeroing_Axis(Z_Axis);
 	  	  }
 	  test = TIM3->CNT;
 	  value = (int)(TIM3->CNT - TIMER_OFFSET_16BIT + underOverFlowCn*TIMER_OFFSET_16BIT-offset);

@@ -20,8 +20,8 @@
 
 
 typedef enum axis{
-	X_AXIS,
-	Y_AXIX,
+	X_Axis,
+	Y_Axis,
 	Z_Axis,
 	W_Axis
 }axis_t;

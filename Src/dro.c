@@ -26,8 +26,10 @@
 #define INTEGER_PART(v) ((int32_t)v)
 #define DECIMAL_PART(v) ((int32_t)((v - (double)(int32_t)v) * DECIMAL_DIGITS))
 
-#define INCREMENT_TO_MM  2/1024
 #define DECIMAL_DIGITS 1000
+#define TIM_X_AXIS TIM4
+#define TIM_Y_AXIS TIM1
+#define TIM_Z_AXIS TIM3
 
 
 void Unlock_Encoders(void);
@@ -173,10 +175,44 @@ void Unlock_Encoders(void){
 
 void Abs_Zeroing_Axis(axis_t axis){
 
+	switch (axis) {
+		case X_Axis:
+			TIM_X_AXIS->CNT = TIMER_OFFSET_16BIT;
+			xOverflowCounter = 0;
+			break;
+		case Y_Axis:
+			TIM_Y_AXIS->CNT = TIMER_OFFSET_16BIT;
+			yOverflowCounter = 0;
+			break;
+		case Z_Axis:
+			TIM_Z_AXIS->CNT = TIMER_OFFSET_16BIT;
+			zOverflowCounter = 0;
+			break;
+		case W_Axis:
+			//TODO: w-Axis
+			break;
+		default:
+			break;
+	}
 }
 
 void Rel_Zeroing_Axis(axis_t axis){
+	switch (axis) {
+			case X_Axis:
 
+				break;
+			case Y_Axis:
+
+				break;
+			case Z_Axis:
+
+				break;
+			case W_Axis:
+
+				break;
+			default:
+				break;
+		}
 }
 
 
