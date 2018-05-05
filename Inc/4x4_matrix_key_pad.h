@@ -13,7 +13,7 @@
 #include "stm32f4xx_hal.h"
 #include "dma.h"
 
-typedef enum key {
+typedef enum keyPad {
 	key_0,
 	key_1,
 	key_2,
@@ -29,10 +29,13 @@ typedef enum key {
 	key_z,
 	key_w,
 	key_abs,
-	key_dia
-}key_t_;
+	key_dia,
+	no_key
+}keyPad_t;
 
 void Init_Matrix_Key_Pad(void);
+keyPad_t Get_Key(void);
+
 
 
 #endif /* 4X4_MATRIX_KEY_PAD_H_ */

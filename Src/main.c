@@ -70,6 +70,7 @@ uint16_t dir1 = 0;
 uint16_t dir = 0;
 int32_t pos = 0;
 int32_t underOverFlowCn = 0;
+keyPad_t testKey = no_key;
 
 /* USER CODE END PV */
 
@@ -166,7 +167,10 @@ int main(void)
 	  dir1 = (TIM3->CR1);
 	  dir = (dir1 & 0x0010)>>4;
 
-	  snprintf(buff2, sizeof(buff2), "%lu", test);
+	  testKey = Get_Key();
+
+
+	  snprintf(buff2, sizeof(buff2), "%lu key= %02u", test, testKey);
 	  snprintf(buff, sizeof(buff), "DIR=%u O=%02li",dir, underOverFlowCn);
 	  snprintf(buff3, sizeof(buff), "Test=%4d.%03d",vor,nach);
 	  LCD_DisplayStringLine(LINE(7), (uint8_t *)buff2);
