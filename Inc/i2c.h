@@ -1,8 +1,14 @@
 /**
   ******************************************************************************
-  * @file    stm32f4xx_it.h
-  * @brief   This file contains the headers of the interrupt handlers.
+  * File Name          : I2C.h
+  * Description        : This file provides code for the configuration
+  *                      of the I2C instances.
   ******************************************************************************
+  ** This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
   * COPYRIGHT(c) 2018 STMicroelectronics
   *
@@ -30,40 +36,46 @@
   *
   ******************************************************************************
   */
-
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4xx_IT_H
-#define __STM32F4xx_IT_H
-
+#ifndef __i2c_H
+#define __i2c_H
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* Includes ------------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+#include "stm32f4xx_hal.h"
+#include "main.h"
 
-void SVC_Handler(void);
-void PendSV_Handler(void);
-void SysTick_Handler(void);
-void EXTI1_IRQHandler(void);
-void EXTI4_IRQHandler(void);
-void EXTI9_5_IRQHandler(void);
-void TIM1_UP_TIM10_IRQHandler(void);
-void TIM2_IRQHandler(void);
-void TIM3_IRQHandler(void);
-void TIM4_IRQHandler(void);
-void EXTI15_10_IRQHandler(void);
-void TIM8_UP_TIM13_IRQHandler(void);
-void DMA2_Stream1_IRQHandler(void);
-void DMA2_Stream3_IRQHandler(void);
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
+extern I2C_HandleTypeDef hi2c1;
+
+/* USER CODE BEGIN Private defines */
+
+/* USER CODE END Private defines */
+
+extern void _Error_Handler(char *, int);
+
+void MX_I2C1_Init(void);
+
+/* USER CODE BEGIN Prototypes */
+
+/* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
+#endif /*__ i2c_H */
 
-#endif /* __STM32F4xx_IT_H */
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

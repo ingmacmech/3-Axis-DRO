@@ -33,11 +33,16 @@ typedef struct position{
 	uint16_t w;
 }position_t;
 
-typedef struct droOptions{
-	bool_t absolut;
-	bool_t diameter;
-}droOptions_t;
 
+typedef enum options{
+	absolut,
+	relative,
+	diameter,
+	radius
+
+}options_t;
+
+void Init_DRO(void);
 void Init_Encoders(void);
 void Update_Abs_Axis_Position(void);
 void Update_Display(void);

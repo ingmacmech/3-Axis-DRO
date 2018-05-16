@@ -106,6 +106,49 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+* @brief This function handles EXTI line1 interrupt.
+*/
+void EXTI1_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI1_IRQn 0 */
+
+  /* USER CODE END EXTI1_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_1);
+  /* USER CODE BEGIN EXTI1_IRQn 1 */
+
+  /* USER CODE END EXTI1_IRQn 1 */
+}
+
+/**
+* @brief This function handles EXTI line4 interrupt.
+*/
+void EXTI4_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI4_IRQn 0 */
+
+  /* USER CODE END EXTI4_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_4);
+  /* USER CODE BEGIN EXTI4_IRQn 1 */
+
+  /* USER CODE END EXTI4_IRQn 1 */
+}
+
+/**
+* @brief This function handles EXTI line[9:5] interrupts.
+*/
+void EXTI9_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+
+  /* USER CODE END EXTI9_5_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
+  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+
+  /* USER CODE END EXTI9_5_IRQn 1 */
+}
+
+/**
 * @brief This function handles TIM1 update interrupt and TIM10 global interrupt.
 */
 void TIM1_UP_TIM10_IRQHandler(void)
@@ -118,10 +161,12 @@ void TIM1_UP_TIM10_IRQHandler(void)
 
   if((TIM1->CNT == 65535) && (TIM1->CR1 & TIM_CR1_DIR)){
       	  yOverflowCounter--;
+      	underOverFlowCn--; // Can be removed only for testing in main
       	  TIM1->CNT = 32768;
         }
         else if ((TIM1->CNT == 0) && (~TIM1->CR1 & TIM_CR1_DIR)){
       	  yOverflowCounter++;
+      	underOverFlowCn++; // Can be removed only for testing in main
       	  TIM1->CNT = 32768;
         }
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
@@ -183,12 +228,12 @@ void TIM4_IRQHandler(void)
 
 
   if((TIM4->CNT == 65535) && (TIM4->CR1 & TIM_CR1_DIR)){
-	  underOverFlowCn--; // Can be removed only for testing in main
+
 	  xOverflowCounter--;
 	  TIM4->CNT = 32768;
   }
   else if ((TIM4->CNT == 0) && (~TIM4->CR1 & TIM_CR1_DIR)){
-	  underOverFlowCn++; // Can be removed only for testing in main
+
 	  xOverflowCounter++;
 	  TIM4->CNT = 32768;
   }
@@ -196,6 +241,23 @@ void TIM4_IRQHandler(void)
 
 
   /* USER CODE END TIM4_IRQn 1 */
+}
+
+/**
+* @brief This function handles EXTI line[15:10] interrupts.
+*/
+void EXTI15_10_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_12);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
 /**

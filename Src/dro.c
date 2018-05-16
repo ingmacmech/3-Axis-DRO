@@ -34,51 +34,75 @@
 
 void Unlock_Encoders(void);
 
-typedef struct absAxisPositions{
+typedef struct axisPositions{
 	int32_t x;
 	int32_t y;
 	int32_t z;
 	int32_t w;
-}absAxisPositions_t;
+}axisPositions_t;
 
 
-typedef struct toolOffsets{
+typedef struct offsets{
 
-	int32_t xAbsOffset;
-	int32_t yAbsOffste;
-	int32_t zAbsOffset;
+	int32_t x;
+	int32_t y;
+	int32_t z;
+	int32_t w;
 
-	int32_t xRelOffset;
-	int32_t yRelOffste;
-	int32_t zRelOffset;
-
-} toolOffsets_t;
+} offsets_t;
 
 typedef struct displayPositionValue{
 
-	int32_t  xIntegerPart;
+	int32_t xIntegerPart;
 	int32_t xDecimalPart;
+	char xNegSign;
 
-	int32_t  yIntegerPart;
+	int32_t yIntegerPart;
     int32_t yDecimalPart;
+    char yNegSign;
 
-    int32_t  zIntegerPart;
+    int32_t zIntegerPart;
     int32_t zDecimalPart;
+    char zNegSign;
 
-    int32_t  wIntegerPart;
+    int32_t wIntegerPart;
     int32_t wDecimalPart;
+    char wNegSign;
 
 }displayPositionValue_t;
 
-toolOffsets_t *offsets[NUMBER_OF_TOOLS];
+typedef struct droOptions{
+	options_t coordinate;
+	options_t xAxis;
+
+}droOptions_t;
+
+offsets_t *toolOffsets[NUMBER_OF_TOOLS];
 
 uint16_t aktiveTool = 0;
 int32_t xOverflowCounter=0;
 int32_t yOverflowCounter=0;
 int32_t zOverflowCounter=0;
 int32_t wOverflowCounter=0;
-absAxisPositions_t absolutPositions;
-displayPositionValue_t posToDislay;
+axisPositions_t absolutPositions;
+axisPositions_t relativePositions;
+offsets_t relativeOffsets;
+char selectedAxis[4] = {'<',' ',' ',' '};
+uint8_t newSelAxisCounter = 0;
+uint8_t oldSelAxisCounter = 0;
+uint8_t toolNumber = 0;
+displayPositionValue_t posToDisplay;
+droOptions_t options;
+
+void Init_DRO(void){
+
+	/* Init Options */
+	options.coordinate = absolut;
+	options.xAxis = radius;
+
+	Init_Encoders();
+}
+
 void Init_Encoders(void){
 
 	/* x-Axis*/
@@ -91,6 +115,7 @@ void Init_Encoders(void){
 	__HAL_TIM_URS_ENABLE(&htim1) ;
 	TIM1->CNT = TIMER_OFFSET_16BIT;
 	HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
+	HAL_TIM_Base_Start_IT(&htim1);
 
 
 	/* z-Axis */
@@ -107,16 +132,17 @@ void Init_Encoders(void){
 
 }
 
+
 void Update_Abs_Axis_Position(void){
 
 	/* x-Axis */
-	absolutPositions.x = (TIM4->CNT - TIMER_OFFSET_16BIT + xOverflowCounter * TIMER_OFFSET_16BIT);
+	absolutPositions.x = (TIM_X_AXIS->CNT - TIMER_OFFSET_16BIT + xOverflowCounter * TIMER_OFFSET_16BIT);
 
     /* y-Axis */
-	absolutPositions.y = (TIM1->CNT - TIMER_OFFSET_16BIT + yOverflowCounter * TIMER_OFFSET_16BIT);
+	absolutPositions.y = (TIM_Y_AXIS->CNT - TIMER_OFFSET_16BIT + yOverflowCounter * TIMER_OFFSET_16BIT);
 
 	/* z-Axis */
-	absolutPositions.z = (TIM3->CNT - TIMER_OFFSET_16BIT + zOverflowCounter * TIMER_OFFSET_16BIT);
+	absolutPositions.z = (TIM_Z_AXIS->CNT - TIMER_OFFSET_16BIT + zOverflowCounter * TIMER_OFFSET_16BIT);
 
 	/* w-Axis */
 	absolutPositions.w = 0;
@@ -124,6 +150,22 @@ void Update_Abs_Axis_Position(void){
 
 }
 
+void Update_Rel_Axis_Position(void){
+
+	/* x-Axis */
+	relativePositions.x = (TIM_X_AXIS->CNT - TIMER_OFFSET_16BIT + xOverflowCounter * TIMER_OFFSET_16BIT) - relativeOffsets.x;
+
+	/* y- Axis */
+	relativePositions.y = (TIM_Y_AXIS->CNT - TIMER_OFFSET_16BIT + yOverflowCounter * TIMER_OFFSET_16BIT) - relativeOffsets.y;
+
+	/* z-Axis */
+	relativePositions.z = (TIM_Z_AXIS->CNT - TIMER_OFFSET_16BIT + zOverflowCounter * TIMER_OFFSET_16BIT) - relativeOffsets.z;
+
+	/* w-Axis */
+	relativePositions.w = 0;
+	//TODO: Implement w-Axis
+
+}
 
 void Show_StartUp_Dysplay(void){
 
@@ -140,29 +182,76 @@ void Set_Axis_Value(void){
 	float tempPosition = 0.0;
 
 	/* x-Axis */
-	tempPosition = (float)(absolutPositions.x * 2.0 / 1024);
-	posToDislay.xIntegerPart = INTEGER_PART(tempPosition);
-	posToDislay.xDecimalPart = DECIMAL_PART(tempPosition);
-	if(posToDislay.xDecimalPart < 0) posToDislay.xDecimalPart *= -1;
+	if(options.coordinate == absolut){
+		tempPosition = (float)(absolutPositions.x * 2.0 / 1024);
+	}
+	else{
+		tempPosition = (float)(relativePositions.x * 2.0 / 1024);
+	}
+	posToDisplay.xIntegerPart = INTEGER_PART(tempPosition);
+	posToDisplay.xDecimalPart = DECIMAL_PART(tempPosition);
+	if(posToDisplay.xDecimalPart < 0){
+		posToDisplay.xDecimalPart *= -1;
+		posToDisplay.xIntegerPart *= -1;
+		posToDisplay.xNegSign = '-';
+	}
+	else{
+		posToDisplay.xNegSign = ' ';
+	}
 
 	/* y-Axis */
-	tempPosition = (float)(absolutPositions.y * 2.0 / 1024);
-	posToDislay.yIntegerPart = INTEGER_PART(tempPosition);
-	posToDislay.yDecimalPart = DECIMAL_PART(tempPosition);
-	if(posToDislay.yDecimalPart < 0) posToDislay.yDecimalPart *= -1;
+	if(options.coordinate == absolut){
+		tempPosition = (float)(absolutPositions.y * 2.0 / 1024);
+	}
+	else{
+		tempPosition = (float)(relativePositions.y * 2.0 / 1024);
+	}
+	posToDisplay.yIntegerPart = INTEGER_PART(tempPosition);
+	posToDisplay.yDecimalPart = DECIMAL_PART(tempPosition);
+	if(posToDisplay.yDecimalPart < 0){
+		posToDisplay.yDecimalPart *= -1;
+		posToDisplay.yIntegerPart *= -1;
+		posToDisplay.yNegSign = '-';
+	}
+	else{
+		posToDisplay.yNegSign = ' ';
+	}
 
 	/* z-Axis */
-	tempPosition = (float)(absolutPositions.z * 2.0 / 1024);
-	posToDislay.zIntegerPart = INTEGER_PART(tempPosition);
-	posToDislay.zDecimalPart = DECIMAL_PART(tempPosition);
-	if(posToDislay.zDecimalPart < 0) posToDislay.zDecimalPart *= -1;
+	if(options.coordinate == absolut){
+		tempPosition = (float)(absolutPositions.z * 2.0 / 1024);
+	}
+	else{
+		tempPosition = (float)(relativePositions.z * 2.0 / 1024);
+	}
+	posToDisplay.zIntegerPart = INTEGER_PART(tempPosition);
+	posToDisplay.zDecimalPart = DECIMAL_PART(tempPosition);
+	if(posToDisplay.zDecimalPart < 0){
+		posToDisplay.zDecimalPart *= -1;
+		posToDisplay.zIntegerPart *= -1;
+		posToDisplay.zNegSign = '-';
+	}
+	else{
+		posToDisplay.zNegSign = ' ';
+	}
 
 	/* w-Axis */
-	tempPosition = (float)(absolutPositions.w * 2.0 / 1024);
-	posToDislay.wIntegerPart = INTEGER_PART(tempPosition);
-	posToDislay.wDecimalPart = DECIMAL_PART(tempPosition);
-	if(posToDislay.wDecimalPart < 0) posToDislay.wDecimalPart *= -1;
-
+	if(options.coordinate == absolut){
+		tempPosition = (float)(absolutPositions.w * 2.0 / 1024);
+	}
+	else{
+		tempPosition = (float)(relativePositions.w * 2.0 / 1024);
+	}
+	posToDisplay.wIntegerPart = INTEGER_PART(tempPosition);
+	posToDisplay.wDecimalPart = DECIMAL_PART(tempPosition);
+	if(posToDisplay.wDecimalPart < 0){
+		posToDisplay.wDecimalPart *= -1;
+		posToDisplay.wIntegerPart *= -1;
+		posToDisplay.wNegSign = '-';
+	}
+	else{
+		posToDisplay.wNegSign = ' ';
+	}
 }
 
 void Unlock_Encoders(void){
@@ -199,16 +288,16 @@ void Abs_Zeroing_Axis(axis_t axis){
 void Rel_Zeroing_Axis(axis_t axis){
 	switch (axis) {
 			case X_Axis:
-
+				relativeOffsets.x = (TIM_X_AXIS->CNT - TIMER_OFFSET_16BIT + xOverflowCounter * TIMER_OFFSET_16BIT);
 				break;
 			case Y_Axis:
-
+				relativeOffsets.y = (TIM_Y_AXIS->CNT - TIMER_OFFSET_16BIT + yOverflowCounter * TIMER_OFFSET_16BIT);
 				break;
 			case Z_Axis:
-
+				relativeOffsets.z = (TIM_Z_AXIS->CNT - TIMER_OFFSET_16BIT + zOverflowCounter * TIMER_OFFSET_16BIT);
 				break;
 			case W_Axis:
-
+				// TODO: w-Axis
 				break;
 			default:
 				break;
@@ -226,20 +315,118 @@ void Update_Display(void){
 	char yBuffer[CHARACTER_PER_LINE];
 	char zBuffer[CHARACTER_PER_LINE];
 	char wBuffer[CHARACTER_PER_LINE];
+	char toolBuffer[CHARACTER_PER_LINE];
 
 	Update_Abs_Axis_Position();
+	Update_Rel_Axis_Position();
 	Set_Axis_Value();
 
 
-	snprintf(xBuffer, CHARACTER_PER_LINE, "X = %4ld.%03ld", posToDislay.xIntegerPart, posToDislay.xDecimalPart);
-	snprintf(yBuffer, CHARACTER_PER_LINE, "Y = %4ld.%03ld", posToDislay.yIntegerPart, posToDislay.yDecimalPart);
-	snprintf(zBuffer, CHARACTER_PER_LINE, "Z = %4ld.%03ld", posToDislay.zIntegerPart, posToDislay.zDecimalPart);
-	snprintf(wBuffer, CHARACTER_PER_LINE, "W = %4ld.%03ld", posToDislay.wIntegerPart, posToDislay.wDecimalPart);
+	snprintf(xBuffer, CHARACTER_PER_LINE, "X = %c%ld.%03ld mm %c   ", posToDisplay.xNegSign, posToDisplay.xIntegerPart, posToDisplay.xDecimalPart, selectedAxis[0]);
+	snprintf(yBuffer, CHARACTER_PER_LINE, "Y = %c%ld.%03ld mm %c   ", posToDisplay.yNegSign, posToDisplay.yIntegerPart, posToDisplay.yDecimalPart, selectedAxis[1]);
+	snprintf(zBuffer, CHARACTER_PER_LINE, "Z = %c%ld.%03ld mm %c   ", posToDisplay.zNegSign, posToDisplay.zIntegerPart, posToDisplay.zDecimalPart, selectedAxis[2]);
+	snprintf(wBuffer, CHARACTER_PER_LINE, "W = %c%ld.%03ld mm %c   ", posToDisplay.wNegSign, posToDisplay.wIntegerPart, posToDisplay.wDecimalPart, selectedAxis[3]);
+	snprintf(toolBuffer, CHARACTER_PER_LINE, "Tool Nr. = %02u", toolNumber);
 
 	LCD_DisplayStringLine(LINE(X_AXIS_LINE), (uint8_t *)xBuffer);
 	LCD_DisplayStringLine(LINE(Y_AXIS_LINE), (uint8_t *)yBuffer);
 	LCD_DisplayStringLine(LINE(Z_AXIS_LINE), (uint8_t *)zBuffer);
 	LCD_DisplayStringLine(LINE(W_AXIS_LINE), (uint8_t *)wBuffer);
+	LCD_DisplayStringLine(LINE(TOOL_NUMBER_LINE), (uint8_t *)toolBuffer);
 
 
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+	switch (GPIO_Pin) {
+		case BUTTON_X_ZERRO_Pin:
+
+			if(options.coordinate == absolut){
+				Abs_Zeroing_Axis(X_Axis);
+			}
+			else{
+				Rel_Zeroing_Axis(X_Axis);
+			}
+			break;
+
+		case BUTTON_Y_ZERRO_Pin:
+
+			if(options.coordinate == absolut){
+				Abs_Zeroing_Axis(Y_Axis);
+			}
+			else{
+				Rel_Zeroing_Axis(Y_Axis);
+			}
+			break;
+
+		case BUTTON_Z_ZERRO_Pin:
+
+			if(options.coordinate == absolut){
+				Abs_Zeroing_Axis(Z_Axis);
+			}
+			else{
+				Rel_Zeroing_Axis(Z_Axis);
+			}
+			break;
+
+		case BUTTON_W_ZERRO_Pin:
+
+			if(options.coordinate == absolut){
+				Abs_Zeroing_Axis(W_Axis);
+			}
+			else{
+				Rel_Zeroing_Axis(W_Axis);
+			}
+			break;
+
+		case BUTTON_SEL_AXIS_Pin:
+
+			if(newSelAxisCounter != 3){
+				newSelAxisCounter++;
+			}
+			else{
+				newSelAxisCounter = 0;
+			}
+			selectedAxis[newSelAxisCounter] = '<';
+			selectedAxis[oldSelAxisCounter] = ' ';
+
+			if(oldSelAxisCounter != 3){
+				oldSelAxisCounter++;
+			}
+			else{
+				oldSelAxisCounter = 0;
+			}
+			break;
+
+		case BUTTON_TOOL_UP_Pin:
+
+			if(toolNumber != NUMBER_OF_TOOLS){
+				toolNumber++;
+			}
+			else{
+				toolNumber = 0;
+			}
+			break;
+
+		case BUTTON_TOOL_DOWN_Pin:
+
+			if(toolNumber != 0){
+				toolNumber--;
+			}
+			else{
+				toolNumber = NUMBER_OF_TOOLS;
+			}
+			break;
+		case BUTTON_CHANGE_COORIDINATE_Pin:
+			if(options.coordinate == absolut){
+				options.coordinate = relative;
+			}
+			else{
+				options.coordinate = absolut;
+			}
+
+			break;
+		default:
+			break;
+	}
 }

@@ -39,6 +39,7 @@
 #include "main.h"
 #include "stm32f4xx_hal.h"
 #include "dma.h"
+#include "i2c.h"
 #include "tim.h"
 #include "gpio.h"
 #include "fsmc.h"
@@ -120,9 +121,10 @@ int main(void)
   MX_TIM5_Init();
   MX_TIM4_Init();
   MX_TIM8_Init();
+  MX_I2C1_Init();
 
   /* USER CODE BEGIN 2 */
-  Init_Encoders();
+  Init_DRO();
 
   STM32f4_Discovery_LCD_Init();
   LCD_Clear(LCD_COLOR_BLACK);
@@ -144,7 +146,7 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-	  HAL_Delay(50);
+	  HAL_Delay(25);
 	  //HAL_GPIO_WritePin(TEST_OUTPUT_GPIO_Port, TEST_OUTPUT_Pin,GPIO_PIN_SET);
 	  Update_Display();
 	  //HAL_GPIO_WritePin(TEST_OUTPUT_GPIO_Port, TEST_OUTPUT_Pin,GPIO_PIN_RESET);
@@ -153,18 +155,18 @@ int main(void)
 
 
 	  if(HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin) == GPIO_PIN_SET){
-	  		  offset = TIM4->CNT - TIMER_OFFSET_16BIT + underOverFlowCn*TIMER_OFFSET_16BIT;
+	  		  offset = TIM1->CNT - TIMER_OFFSET_16BIT + underOverFlowCn*TIMER_OFFSET_16BIT;
 	  		  Abs_Zeroing_Axis(X_Axis);
 	  		  Abs_Zeroing_Axis(Y_Axis);
 	  		  Abs_Zeroing_Axis(Z_Axis);
 	  	  }
-	  test = TIM3->CNT;
-	  value = (int)(TIM3->CNT - TIMER_OFFSET_16BIT + underOverFlowCn*TIMER_OFFSET_16BIT-offset);
+	  test = TIM1->CNT;
+	  value = (int)(TIM1->CNT - TIMER_OFFSET_16BIT + underOverFlowCn*TIMER_OFFSET_16BIT-offset);
 	  travel = value*2.0/1024;
 	  intVal = travel *1000;
 	  vor = intVal/1000;
 	  nach = abs(intVal%1000);
-	  dir1 = (TIM3->CR1);
+	  dir1 = (TIM1->CR1);
 	  dir = (dir1 & 0x0010)>>4;
 
 	  testKey = Get_Key();
