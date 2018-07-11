@@ -52,6 +52,7 @@ void Abs_Zeroing_Axis(axis_t axis);
 void Rel_Zeroing_Axis(axis_t axis);
 void Set_Aktive_Tool(uint16_t toolNumber);
 void Update_Display(void);
+void Read_KeyPad_Value(void);
 
 
 

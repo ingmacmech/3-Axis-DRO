@@ -72,6 +72,9 @@
 #define OTG_FS_PowerSwitchOn_GPIO_Port GPIOC
 #define CSn_Pin GPIO_PIN_1
 #define CSn_GPIO_Port GPIOC
+#define BUTTON_SET_AXIS_VALUE_Pin GPIO_PIN_2
+#define BUTTON_SET_AXIS_VALUE_GPIO_Port GPIOC
+#define BUTTON_SET_AXIS_VALUE_EXTI_IRQn EXTI2_IRQn
 #define PDM_OUT_Pin GPIO_PIN_3
 #define PDM_OUT_GPIO_Port GPIOC
 #define B1_Pin GPIO_PIN_0

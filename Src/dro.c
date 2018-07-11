@@ -337,6 +337,10 @@ void Update_Display(void){
 
 }
 
+void Read_KeyPad_Value(void){
+
+}
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 	switch (GPIO_Pin) {
 		case BUTTON_X_ZERRO_Pin:
@@ -426,6 +430,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			}
 
 			break;
+		case BUTTON_SET_AXIS_VALUE_Pin:
+
+		break;
 		default:
 			break;
 	}
