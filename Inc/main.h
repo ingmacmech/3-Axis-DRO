@@ -1,7 +1,8 @@
 /**
   ******************************************************************************
-  * File Name          : main.h
-  * Description        : This file contains the common defines of the application
+  * @file           : main.h
+  * @brief          : Header for main.c file.
+  *                   This file contains the common defines of the application.
   ******************************************************************************
   ** This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
@@ -9,7 +10,7 @@
   * inserted by the user or by software development tools
   * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * COPYRIGHT(c) 2019 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -35,10 +36,13 @@
   *
   ******************************************************************************
   */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
-  /* Includes ------------------------------------------------------------------*/
+#ifndef __MAIN_H__
+#define __MAIN_H__
+
+/* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -48,18 +52,14 @@
 
 #define TEST_OUTPUT_Pin GPIO_PIN_2
 #define TEST_OUTPUT_GPIO_Port GPIOE
-#define BUTTON_SEL_AXIS_Pin GPIO_PIN_4
-#define BUTTON_SEL_AXIS_GPIO_Port GPIOE
-#define BUTTON_SEL_AXIS_EXTI_IRQn EXTI4_IRQn
-#define BUTTON_TOOL_UP_Pin GPIO_PIN_5
-#define BUTTON_TOOL_UP_GPIO_Port GPIOE
-#define BUTTON_TOOL_UP_EXTI_IRQn EXTI9_5_IRQn
-#define BUTTON_TOOL_DOWN_Pin GPIO_PIN_6
-#define BUTTON_TOOL_DOWN_GPIO_Port GPIOE
-#define BUTTON_TOOL_DOWN_EXTI_IRQn EXTI9_5_IRQn
-#define BUTTON_CHANGE_COORIDINATE_Pin GPIO_PIN_13
-#define BUTTON_CHANGE_COORIDINATE_GPIO_Port GPIOC
-#define BUTTON_CHANGE_COORIDINATE_EXTI_IRQn EXTI15_10_IRQn
+#define BUTTON_OPT_Pin GPIO_PIN_4
+#define BUTTON_OPT_GPIO_Port GPIOE
+#define BUTTON_UP_Pin GPIO_PIN_5
+#define BUTTON_UP_GPIO_Port GPIOE
+#define BUTTON_DOWN_Pin GPIO_PIN_6
+#define BUTTON_DOWN_GPIO_Port GPIOE
+#define BUTTON_ENTER_Pin GPIO_PIN_13
+#define BUTTON_ENTER_GPIO_Port GPIOC
 #define PC14_OSC32_IN_Pin GPIO_PIN_14
 #define PC14_OSC32_IN_GPIO_Port GPIOC
 #define PC15_OSC32_OUT_Pin GPIO_PIN_15
@@ -72,21 +72,23 @@
 #define OTG_FS_PowerSwitchOn_GPIO_Port GPIOC
 #define CSn_Pin GPIO_PIN_1
 #define CSn_GPIO_Port GPIOC
-#define BUTTON_SET_AXIS_VALUE_Pin GPIO_PIN_2
-#define BUTTON_SET_AXIS_VALUE_GPIO_Port GPIOC
-#define BUTTON_SET_AXIS_VALUE_EXTI_IRQn EXTI2_IRQn
 #define PDM_OUT_Pin GPIO_PIN_3
 #define PDM_OUT_GPIO_Port GPIOC
-#define B1_Pin GPIO_PIN_0
-#define B1_GPIO_Port GPIOA
+#define BUTTON_SEL_Pin GPIO_PIN_3
+#define BUTTON_SEL_GPIO_Port GPIOA
+#define BUTTON_SEL_EXTI_IRQn EXTI3_IRQn
 #define I2S3_WS_Pin GPIO_PIN_4
 #define I2S3_WS_GPIO_Port GPIOA
 #define SPI1_SCK_Pin GPIO_PIN_5
 #define SPI1_SCK_GPIO_Port GPIOA
 #define SPI1_MISO_Pin GPIO_PIN_6
 #define SPI1_MISO_GPIO_Port GPIOA
-#define SPI1_MOSI_Pin GPIO_PIN_7
-#define SPI1_MOSI_GPIO_Port GPIOA
+#define BUTTON_AXIS_Pin GPIO_PIN_7
+#define BUTTON_AXIS_GPIO_Port GPIOA
+#define BUTTON_TOOL_Pin GPIO_PIN_4
+#define BUTTON_TOOL_GPIO_Port GPIOC
+#define BUTTON_SUB_Pin GPIO_PIN_5
+#define BUTTON_SUB_GPIO_Port GPIOC
 #define BUTTON_Y_ZERRO_Pin GPIO_PIN_1
 #define BUTTON_Y_ZERRO_GPIO_Port GPIOB
 #define BUTTON_Y_ZERRO_EXTI_IRQn EXTI1_IRQn
@@ -125,31 +127,45 @@
 #define I2S3_SCK_GPIO_Port GPIOC
 #define I2S3_SD_Pin GPIO_PIN_12
 #define I2S3_SD_GPIO_Port GPIOC
+#define BUTTON_SET_Pin GPIO_PIN_2
+#define BUTTON_SET_GPIO_Port GPIOD
+#define BUTTON_SET_EXTI_IRQn EXTI2_IRQn
 #define LCD_RST_PIN_Pin GPIO_PIN_3
 #define LCD_RST_PIN_GPIO_Port GPIOD
+#define BUTTON_ABS_Pin GPIO_PIN_6
+#define BUTTON_ABS_GPIO_Port GPIOD
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
 #define SCL_EEPROM_Pin GPIO_PIN_8
 #define SCL_EEPROM_GPIO_Port GPIOB
 #define SDA_EEPROM_Pin GPIO_PIN_9
 #define SDA_EEPROM_GPIO_Port GPIOB
+#define BUTTON_HALF_Pin GPIO_PIN_0
+#define BUTTON_HALF_GPIO_Port GPIOE
+#define BUTTON_HALF_EXTI_IRQn EXTI0_IRQn
+
+/* ########################## Assert Selection ############################## */
+/**
+  * @brief Uncomment the line below to expanse the "assert_param" macro in the 
+  *        HAL drivers code
+  */
+ #define USE_FULL_ASSERT    1U 
 
 /* USER CODE BEGIN Private defines */
 #define TRUE 1
 #define FALSE 0
 /* USER CODE END Private defines */
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
 void _Error_Handler(char *, int);
 
 #define Error_Handler() _Error_Handler(__FILE__, __LINE__)
+#ifdef __cplusplus
+}
+#endif
 
-/**
-  * @}
-  */ 
+#endif /* __MAIN_H__ */
 
-/**
-  * @}
-*/ 
-
-#endif /* __MAIN_H */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

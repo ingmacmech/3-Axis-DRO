@@ -383,7 +383,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			}
 			break;
 
-		case BUTTON_SEL_AXIS_Pin:
+		case BUTTON_AXIS_Pin:
 
 			if(newSelAxisCounter != 3){
 				newSelAxisCounter++;
@@ -402,7 +402,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			}
 			break;
 
-		case BUTTON_TOOL_UP_Pin:
+		case BUTTON_UP_Pin:
 
 			if(toolNumber != NUMBER_OF_TOOLS){
 				toolNumber++;
@@ -412,7 +412,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			}
 			break;
 
-		case BUTTON_TOOL_DOWN_Pin:
+		/*case BUTTON_DOWN_Pin:
 
 			if(toolNumber != 0){
 				toolNumber--;
@@ -420,8 +420,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			else{
 				toolNumber = NUMBER_OF_TOOLS;
 			}
-			break;
-		case BUTTON_CHANGE_COORIDINATE_Pin:
+			break;*/
+
+		case BUTTON_ABS_Pin:
 			if(options.coordinate == absolut){
 				options.coordinate = relative;
 			}
@@ -430,9 +431,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			}
 
 			break;
-		case BUTTON_SET_AXIS_VALUE_Pin:
 
-		break;
+
+
 		default:
 			break;
 	}
