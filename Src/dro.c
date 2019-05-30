@@ -30,6 +30,7 @@
 #define TIM_X_AXIS TIM4
 #define TIM_Y_AXIS TIM1
 #define TIM_Z_AXIS TIM3
+#define TIM_W_AXIS TIM2
 
 
 void Unlock_Encoders(void);
@@ -126,6 +127,10 @@ void Init_Encoders(void){
 
 	/* w-Axis */
 	//TODO: Implement Init w-Axis
+	__HAL_TIM_URS_ENABLE(&htim2);
+	TIM2->CNT = TIMER_OFFSET_16BIT;
+	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+	HAL_TIM_Base_Start_IT(&htim2);
 
 	/* Unlock all Encoders */
 	Unlock_Encoders();
@@ -145,8 +150,7 @@ void Update_Abs_Axis_Position(void){
 	absolutPositions.z = (TIM_Z_AXIS->CNT - TIMER_OFFSET_16BIT + zOverflowCounter * TIMER_OFFSET_16BIT);
 
 	/* w-Axis */
-	absolutPositions.w = 0;
-	//TODO: Implement w-Axis
+	absolutPositions.w = (TIM_W_AXIS->CNT - TIMER_OFFSET_32BIT + wOverflowCounter * TIMER_OFFSET_32BIT);
 
 }
 
@@ -162,8 +166,8 @@ void Update_Rel_Axis_Position(void){
 	relativePositions.z = (TIM_Z_AXIS->CNT - TIMER_OFFSET_16BIT + zOverflowCounter * TIMER_OFFSET_16BIT) - relativeOffsets.z;
 
 	/* w-Axis */
-	relativePositions.w = 0;
-	//TODO: Implement w-Axis
+	relativePositions.w = (TIM_W_AXIS->CNT - TIMER_OFFSET_32BIT + wOverflowCounter * TIMER_OFFSET_32BIT) - relativeOffsets.w;
+
 
 }
 
@@ -190,6 +194,7 @@ void Set_Axis_Value(void){
 	}
 	posToDisplay.xIntegerPart = INTEGER_PART(tempPosition);
 	posToDisplay.xDecimalPart = DECIMAL_PART(tempPosition);
+
 	if(posToDisplay.xDecimalPart < 0){
 		posToDisplay.xDecimalPart *= -1;
 		posToDisplay.xIntegerPart *= -1;
@@ -278,7 +283,8 @@ void Abs_Zeroing_Axis(axis_t axis){
 			zOverflowCounter = 0;
 			break;
 		case W_Axis:
-			//TODO: w-Axis
+			TIM_W_AXIS->CNT = TIMER_OFFSET_32BIT;
+			wOverflowCounter = 0;
 			break;
 		default:
 			break;
@@ -297,7 +303,7 @@ void Rel_Zeroing_Axis(axis_t axis){
 				relativeOffsets.z = (TIM_Z_AXIS->CNT - TIMER_OFFSET_16BIT + zOverflowCounter * TIMER_OFFSET_16BIT);
 				break;
 			case W_Axis:
-				// TODO: w-Axis
+				relativeOffsets.w = (TIM_W_AXIS->CNT - TIMER_OFFSET_32BIT + wOverflowCounter * TIMER_OFFSET_32BIT);
 				break;
 			default:
 				break;

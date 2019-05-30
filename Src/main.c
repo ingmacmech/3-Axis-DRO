@@ -74,6 +74,8 @@ int32_t pos = 0;
 int32_t underOverFlowCn = 0;
 keyPad_t testKey = no_key;
 
+extern uint32_t wOverflowCounter;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -164,9 +166,9 @@ int main(void)
 	  		  Abs_Zeroing_Axis(Y_Axis);
 	  		  Abs_Zeroing_Axis(Z_Axis);
 	  	  }*/
-	  test = TIM1->CNT;
-	  value = (int)(TIM1->CNT - TIMER_OFFSET_16BIT + underOverFlowCn*TIMER_OFFSET_16BIT-offset);
-	  travel = value*2.0/1024;
+	  test = TIM2->CNT;
+	  value = (int)(TIM2->CNT - TIMER_OFFSET_16BIT + wOverflowCounter * TIMER_OFFSET_16BIT - offset);
+	  travel = value/1024 * 2 ;
 	  intVal = travel *1000;
 	  vor = intVal/1000;
 	  nach = abs(intVal%1000);
@@ -177,7 +179,7 @@ int main(void)
 
 
 	  snprintf(buff2, sizeof(buff2), "%lu key= %02u", test, testKey);
-	  snprintf(buff, sizeof(buff), "DIR=%u O=%02li",dir, underOverFlowCn);
+	  snprintf(buff, sizeof(buff), "DIR=%u O=%02li",dir, wOverflowCounter);
 	  snprintf(buff3, sizeof(buff), "Test=%4d.%03d",vor,nach);
 	  LCD_DisplayStringLine(LINE(7), (uint8_t *)buff2);
 	  LCD_DisplayStringLine(LINE(8), (uint8_t *)buff3);

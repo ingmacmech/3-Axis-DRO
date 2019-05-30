@@ -37,6 +37,7 @@
 
 /* USER CODE BEGIN 0 */
 #include "main.h"
+#include "tim.h"
 extern int32_t underOverFlowCn;
 extern int32_t xOverflowCounter;
 extern int32_t yOverflowCounter;
@@ -172,16 +173,15 @@ void TIM1_UP_TIM10_IRQHandler(void)
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
 
-  if((TIM1->CNT == 65535) && (TIM1->CR1 & TIM_CR1_DIR)){
+  if((TIM1->CNT == TIMER_MAXVALUE_16BIT) && (TIM1->CR1 & TIM_CR1_DIR)){
       	  yOverflowCounter--;
-      	underOverFlowCn--; // Can be removed only for testing in main
-      	  TIM1->CNT = 32768;
+      	  TIM1->CNT = TIMER_OFFSET_16BIT;
         }
-        else if ((TIM1->CNT == 0) && (~TIM1->CR1 & TIM_CR1_DIR)){
+  else if ((TIM1->CNT == TIMER_MINVALUE) && (~(TIM1->CR1 & TIM_CR1_DIR))){
       	  yOverflowCounter++;
-      	underOverFlowCn++; // Can be removed only for testing in main
-      	  TIM1->CNT = 32768;
+      	  TIM1->CNT = TIMER_OFFSET_16BIT;
         }
+
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
 }
 
@@ -195,14 +195,14 @@ void TIM2_IRQHandler(void)
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */
-  if((TIM2->CNT == 65535) && (TIM2->CR1 & TIM_CR1_DIR)){
-    	  wOverflowCounter--;
-    	  TIM2->CNT = 32768;
-      }
-      else if ((TIM2->CNT == 0) && (~TIM2->CR1 & TIM_CR1_DIR)){
-    	  wOverflowCounter++;
-    	  TIM2->CNT = 32768;
-      }
+  if((TIM2->CNT == TIMER_MAXVALUE_16BIT) && (TIM2->CR1 & TIM_CR1_DIR)){
+        	  yOverflowCounter--;
+        	  TIM2->CNT = TIMER_OFFSET_16BIT;
+          }
+    else if ((TIM2->CNT == TIMER_MINVALUE) && (~(TIM2->CR1 & TIM_CR1_DIR))){
+        	  yOverflowCounter++;
+        	  TIM2->CNT = TIMER_OFFSET_16BIT;
+          }
   /* USER CODE END TIM2_IRQn 1 */
 }
 
@@ -216,13 +216,13 @@ void TIM3_IRQHandler(void)
   /* USER CODE END TIM3_IRQn 0 */
   HAL_TIM_IRQHandler(&htim3);
   /* USER CODE BEGIN TIM3_IRQn 1 */
-  if((TIM3->CNT == 65535) && (TIM3->CR1 & TIM_CR1_DIR)){
+  if((TIM3->CNT == TIMER_MAXVALUE_16BIT) && (TIM3->CR1 & TIM_CR1_DIR)){
       	  zOverflowCounter--;
-      	  TIM3->CNT = 32768;
+      	  TIM3->CNT = TIMER_OFFSET_16BIT;
         }
-        else if ((TIM3->CNT == 0) && (~TIM3->CR1 & TIM_CR1_DIR)){
+        else if ((TIM3->CNT == TIMER_MINVALUE) && (~(TIM3->CR1 & TIM_CR1_DIR))){
       	  zOverflowCounter++;
-      	  TIM3->CNT = 32768;
+      	  TIM3->CNT = TIMER_OFFSET_16BIT;
         }
   /* USER CODE END TIM3_IRQn 1 */
 }
@@ -240,15 +240,15 @@ void TIM4_IRQHandler(void)
   //HAL_GPIO_TogglePin(TEST_OUTPUT_GPIO_Port, TEST_OUTPUT_Pin);
 
 
-  if((TIM4->CNT == 65535) && (TIM4->CR1 & TIM_CR1_DIR)){
+  if((TIM4->CNT == TIMER_MAXVALUE_16BIT) && (TIM4->CR1 & TIM_CR1_DIR)){
 
 	  xOverflowCounter--;
-	  TIM4->CNT = 32768;
+	  TIM4->CNT = TIMER_OFFSET_16BIT;
   }
-  else if ((TIM4->CNT == 0) && (~TIM4->CR1 & TIM_CR1_DIR)){
+  else if ((TIM4->CNT == TIMER_MINVALUE) && (~(TIM4->CR1 & TIM_CR1_DIR))){
 
 	  xOverflowCounter++;
-	  TIM4->CNT = 32768;
+	  TIM4->CNT = TIMER_OFFSET_16BIT;
   }
 
 

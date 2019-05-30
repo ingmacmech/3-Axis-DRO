@@ -60,6 +60,10 @@ extern TIM_HandleTypeDef htim8;
 
 /* USER CODE BEGIN Private defines */
 #define TIMER_OFFSET_16BIT 32768
+#define TIMER_OFFSET_32BIT 2147483648
+#define TIMER_MAXVALUE_16BIT 65535
+#define TIMER_MAXVALUE_32BIT 4294967295
+#define TIMER_MINVALUE 0
 /* USER CODE END Private defines */
 
 extern void _Error_Handler(char *, int);
