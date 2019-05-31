@@ -140,6 +140,10 @@ int main(void)
   Show_StartUp_Dysplay();
   Init_Matrix_Key_Pad();
 
+  Abs_Zeroing_Axis(ALL_Axis);
+  Rel_Zeroing_Axis(ALL_Axis);
+
+
 
 
 

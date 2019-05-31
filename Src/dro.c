@@ -126,7 +126,6 @@ void Init_Encoders(void){
 	HAL_TIM_Base_Start_IT(&htim3);
 
 	/* w-Axis */
-	//TODO: Implement Init w-Axis
 	__HAL_TIM_URS_ENABLE(&htim2);
 	TIM2->CNT = TIMER_OFFSET_16BIT;
 	HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
@@ -150,7 +149,7 @@ void Update_Abs_Axis_Position(void){
 	absolutPositions.z = (TIM_Z_AXIS->CNT - TIMER_OFFSET_16BIT + zOverflowCounter * TIMER_OFFSET_16BIT);
 
 	/* w-Axis */
-	absolutPositions.w = (TIM_W_AXIS->CNT - TIMER_OFFSET_32BIT + wOverflowCounter * TIMER_OFFSET_32BIT);
+	absolutPositions.w = (TIM_W_AXIS->CNT - TIMER_OFFSET_16BIT + wOverflowCounter * TIMER_OFFSET_16BIT);
 
 }
 
@@ -166,7 +165,7 @@ void Update_Rel_Axis_Position(void){
 	relativePositions.z = (TIM_Z_AXIS->CNT - TIMER_OFFSET_16BIT + zOverflowCounter * TIMER_OFFSET_16BIT) - relativeOffsets.z;
 
 	/* w-Axis */
-	relativePositions.w = (TIM_W_AXIS->CNT - TIMER_OFFSET_32BIT + wOverflowCounter * TIMER_OFFSET_32BIT) - relativeOffsets.w;
+	relativePositions.w = (TIM_W_AXIS->CNT - TIMER_OFFSET_16BIT + wOverflowCounter * TIMER_OFFSET_16BIT) - relativeOffsets.w;
 
 
 }
@@ -283,7 +282,20 @@ void Abs_Zeroing_Axis(axis_t axis){
 			zOverflowCounter = 0;
 			break;
 		case W_Axis:
-			TIM_W_AXIS->CNT = TIMER_OFFSET_32BIT;
+			TIM_W_AXIS->CNT = TIMER_OFFSET_16BIT;
+			wOverflowCounter = 0;
+			break;
+		case ALL_Axis:
+			TIM_X_AXIS->CNT = TIMER_OFFSET_16BIT;
+			xOverflowCounter = 0;
+
+			TIM_Y_AXIS->CNT = TIMER_OFFSET_16BIT;
+			yOverflowCounter = 0;
+
+			TIM_Z_AXIS->CNT = TIMER_OFFSET_16BIT;
+			zOverflowCounter = 0;
+
+			TIM_W_AXIS->CNT = TIMER_OFFSET_16BIT;
 			wOverflowCounter = 0;
 			break;
 		default:
@@ -303,7 +315,13 @@ void Rel_Zeroing_Axis(axis_t axis){
 				relativeOffsets.z = (TIM_Z_AXIS->CNT - TIMER_OFFSET_16BIT + zOverflowCounter * TIMER_OFFSET_16BIT);
 				break;
 			case W_Axis:
-				relativeOffsets.w = (TIM_W_AXIS->CNT - TIMER_OFFSET_32BIT + wOverflowCounter * TIMER_OFFSET_32BIT);
+				relativeOffsets.w = (TIM_W_AXIS->CNT - TIMER_OFFSET_16BIT + wOverflowCounter * TIMER_OFFSET_16BIT);
+				break;
+			case ALL_Axis:
+				relativeOffsets.x = (TIM_X_AXIS->CNT - TIMER_OFFSET_16BIT + xOverflowCounter * TIMER_OFFSET_16BIT);
+				relativeOffsets.y = (TIM_Y_AXIS->CNT - TIMER_OFFSET_16BIT + yOverflowCounter * TIMER_OFFSET_16BIT);
+				relativeOffsets.z = (TIM_Z_AXIS->CNT - TIMER_OFFSET_16BIT + zOverflowCounter * TIMER_OFFSET_16BIT);
+				relativeOffsets.w = (TIM_W_AXIS->CNT - TIMER_OFFSET_16BIT + wOverflowCounter * TIMER_OFFSET_16BIT);
 				break;
 			default:
 				break;
@@ -322,6 +340,9 @@ void Update_Display(void){
 	char zBuffer[CHARACTER_PER_LINE];
 	char wBuffer[CHARACTER_PER_LINE];
 	char toolBuffer[CHARACTER_PER_LINE];
+	char coordinateAbs[4] = {'a','b','s','\n'};
+ 	char coordinateInc[4] = {'i','n','c','\n'};
+
 
 	Update_Abs_Axis_Position();
 	Update_Rel_Axis_Position();
@@ -332,7 +353,12 @@ void Update_Display(void){
 	snprintf(yBuffer, CHARACTER_PER_LINE, "Y = %c%ld.%03ld mm %c   ", posToDisplay.yNegSign, posToDisplay.yIntegerPart, posToDisplay.yDecimalPart, selectedAxis[1]);
 	snprintf(zBuffer, CHARACTER_PER_LINE, "Z = %c%ld.%03ld mm %c   ", posToDisplay.zNegSign, posToDisplay.zIntegerPart, posToDisplay.zDecimalPart, selectedAxis[2]);
 	snprintf(wBuffer, CHARACTER_PER_LINE, "W = %c%ld.%03ld mm %c   ", posToDisplay.wNegSign, posToDisplay.wIntegerPart, posToDisplay.wDecimalPart, selectedAxis[3]);
-	snprintf(toolBuffer, CHARACTER_PER_LINE, "Tool Nr. = %02u", toolNumber);
+	if(options.coordinate == absolut){
+		snprintf(toolBuffer, CHARACTER_PER_LINE, "Tool Nr. = %02u %s", toolNumber, coordinateAbs);
+	}
+	else{
+		snprintf(toolBuffer, CHARACTER_PER_LINE, "Tool Nr. = %02u %s", toolNumber, coordinateInc);
+	}
 
 	LCD_DisplayStringLine(LINE(X_AXIS_LINE), (uint8_t *)xBuffer);
 	LCD_DisplayStringLine(LINE(Y_AXIS_LINE), (uint8_t *)yBuffer);
@@ -389,7 +415,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			}
 			break;
 
-		case BUTTON_AXIS_Pin:
+		/*case BUTTON_AXIS_Pin:
 
 			if(newSelAxisCounter != 3){
 				newSelAxisCounter++;
@@ -418,7 +444,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			}
 			break;
 
-		/*case BUTTON_DOWN_Pin:
+		case BUTTON_DOWN_Pin:
 
 			if(toolNumber != 0){
 				toolNumber--;
@@ -444,3 +470,4 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			break;
 	}
 }
+

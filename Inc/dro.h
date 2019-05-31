@@ -23,7 +23,8 @@ typedef enum axis{
 	X_Axis,
 	Y_Axis,
 	Z_Axis,
-	W_Axis
+	W_Axis,
+	ALL_Axis
 }axis_t;
 
 typedef struct position{
@@ -53,6 +54,7 @@ void Rel_Zeroing_Axis(axis_t axis);
 void Set_Aktive_Tool(uint16_t toolNumber);
 void Update_Display(void);
 void Read_KeyPad_Value(void);
+
 
 
 
