@@ -17,6 +17,12 @@
 
 #define NUMBER_OF_TOOLS 10
 
+uint8_t selectFlag = 0;
+uint8_t setFlag = 0;
+uint8_t optiuonsFlag = 0;
+uint8_t enterFlag = 0;
+
+
 
 
 typedef enum axis{
@@ -54,6 +60,7 @@ void Rel_Zeroing_Axis(axis_t axis);
 void Set_Aktive_Tool(uint16_t toolNumber);
 void Update_Display(void);
 void Read_KeyPad_Value(void);
+void Sel_Funktion(void);
 
 
 

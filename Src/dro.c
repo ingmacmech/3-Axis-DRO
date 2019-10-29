@@ -415,6 +415,24 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			}
 			break;
 
+		case BUTTON_SEL_Pin:
+
+			selectFlag = 1;
+
+			break;
+
+		case BUTTON_SET_Pin:
+
+			setFlag = 1;
+
+			break;
+
+		case BUTTON_ENTER_Pin:
+
+			enterFlag = 1;
+
+		break;
+
 		/*case BUTTON_AXIS_Pin:
 
 			if(newSelAxisCounter != 3){
@@ -464,10 +482,20 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 			break;
 
-
-
 		default:
 			break;
 	}
+}
+
+
+void Sel_Function(void){
+
+	selectFlag = 0;
+
+	while(enterFlag != 1){
+
+	}
+
+	enterFlag = 0;
 }
 
