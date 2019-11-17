@@ -17,13 +17,6 @@
 
 #define NUMBER_OF_TOOLS 10
 
-uint8_t selectFlag = 0;
-uint8_t setFlag = 0;
-uint8_t optiuonsFlag = 0;
-uint8_t enterFlag = 0;
-
-
-
 
 typedef enum axis{
 	X_Axis,
